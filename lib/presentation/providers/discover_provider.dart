@@ -6,6 +6,8 @@ class DiscoverProvider extends ChangeNotifier {
   List<VideoPost> videos = [];
 
   Future<void> loadNextPage() async {
+    // todo: cargar videos
+
     notifyListeners();
   }
 }
