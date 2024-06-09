@@ -44,3 +44,6 @@ app.*.map.json
 
 # Ignore all files in assets/videos (test videos)
 assets/videos/
+
+# Api keys
+.env
