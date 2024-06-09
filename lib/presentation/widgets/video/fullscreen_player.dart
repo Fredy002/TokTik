@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -22,10 +24,13 @@ class _FullscreenPlayerState extends State<FullscreenPlayer> {
   void initState() {
     super.initState();
 
-    controller = VideoPlayerController.asset(widget.videoUrl)
+    controller = VideoPlayerController.network(widget.videoUrl)
       ..setVolume(0)
       ..setLooping(true)
-      ..play();
+      ..initialize().then((_) {
+        setState(() {});
+        controller.play();
+      });
   }
 
   @override
@@ -38,22 +43,13 @@ class _FullscreenPlayerState extends State<FullscreenPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: controller.initialize(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return const Center(
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-            ),
+    return controller.value.isInitialized
+        ? AspectRatio(
+            aspectRatio: controller.value.aspectRatio,
+            child: VideoPlayer(controller),
+          )
+        : const Center(
+            child: CircularProgressIndicator(),
           );
-        }
-
-        return AspectRatio(
-          aspectRatio: controller.value.aspectRatio,
-          child: VideoPlayer(controller),
-        );
-      },
-    );
   }
 }
