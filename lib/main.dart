@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:toktik/config/theme/app_theme.dart';
-import 'package:toktik/presentation/providers/discover_provider.dart';
+import 'package:toktik/presentation/providers/discover_provider_pexels.dart';
 import 'package:toktik/presentation/screens/discover/discover_screen.dart';
 
 void main() => runApp(const MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => DiscoverProvider()..loadNextPage(),
+          create: (_) => DiscoverProviderPexels()..loadNextPage(),
         )
       ],
       child: MaterialApp(
