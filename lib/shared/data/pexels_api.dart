@@ -1,16 +1,14 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:toktik/infrastructure/models/pexels_video_model.dart';
 
 class PexelsAPI {
-  static const String apiKey =
-      '909SfdnSvlYolqgcU35uVnB3Wgt3Gpb9RspDi7PDhDCY6eL9rG7YLGhR';
-  static const String baseUrl = 'https://api.pexels.com/videos';
   final Dio _dio;
 
   PexelsAPI()
       : _dio = Dio(BaseOptions(
-          baseUrl: baseUrl,
-          headers: {'Authorization': apiKey},
+          baseUrl: 'https://api.pexels.com/videos',
+          headers: {'Authorization': dotenv.env['PEXELS_API_KEY']},
         ));
 
   Future<List<PexelsVideoModel>> fetchVideos(
@@ -24,9 +22,20 @@ class PexelsAPI {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        return (data['videos'] as List)
-            .map((video) => PexelsVideoModel.fromJson(video))
-            .toList();
+        final List<dynamic> videos = data['videos'];
+
+        // Mapa para rastrear videos únicos por usuario
+        final Map<int, PexelsVideoModel> uniqueUserVideos = {};
+
+        for (var video in videos) {
+          final pexelsVideoModel = PexelsVideoModel.fromJson(video);
+          // Verificar si el user id ya está en el mapa
+          if (!uniqueUserVideos.containsKey(pexelsVideoModel.userId)) {
+            uniqueUserVideos[pexelsVideoModel.userId] = pexelsVideoModel;
+          }
+        }
+
+        return uniqueUserVideos.values.toList();
       } else {
         throw Exception('Failed to load videos');
       }
