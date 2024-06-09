@@ -25,10 +25,10 @@ class _FullscreenPlayerState extends State<FullscreenPlayer> {
     super.initState();
 
     controller = VideoPlayerController.network(widget.videoUrl)
-      ..setVolume(0)
-      ..setLooping(true)
       ..initialize().then((_) {
         setState(() {});
+        controller.setVolume(0);
+        controller.setLooping(true);
         controller.play();
       });
   }
@@ -49,7 +49,9 @@ class _FullscreenPlayerState extends State<FullscreenPlayer> {
             child: VideoPlayer(controller),
           )
         : const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+            ),
           );
   }
 }
