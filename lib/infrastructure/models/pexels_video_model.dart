@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:toktik/domain/entities/video_post.dart';
 
 class PexelsVideoModel {
@@ -11,6 +9,7 @@ class PexelsVideoModel {
   final int duration;
   final String videoUrl;
   final String user;
+  final int userId; // Agregar userId
   final int likes;
   final int views;
 
@@ -23,15 +22,14 @@ class PexelsVideoModel {
     required this.duration,
     required this.videoUrl,
     required this.user,
+    required this.userId, // Agregar userId al constructor
     this.likes = 0,
     this.views = 0,
   });
 
   factory PexelsVideoModel.fromJson(Map<String, dynamic> json) {
-    final random = Random();
-    final videoFile = (json['video_files'] as List).firstWhere(
-        (file) => file['quality'] == 'hd',
-        orElse: () => json['video_files'][0]);
+    final videoFile = (json['video_files'] as List)
+        .firstWhere((file) => file['quality'] == 'hd', orElse: () => json['video_files'][0]);
 
     return PexelsVideoModel(
       id: json['id'],
@@ -42,15 +40,16 @@ class PexelsVideoModel {
       duration: json['duration'],
       videoUrl: videoFile['link'],
       user: json['user']['name'],
-      likes: json['likes'] ?? random.nextInt(1000) + 1000,
-      views: json['views'] ?? random.nextInt(1000) + 1000,
+      userId: json['user']['id'], // Agregar userId desde el JSON
+      likes: json['likes'] ?? 0,
+      views: json['views'] ?? 0,
     );
   }
 
-  VideoPost toVideoPostEntity() => VideoPost(
-        caption: user,
-        videoUrl: videoUrl,
-        likes: likes,
-        views: views,
-      );
+  VideoPost toVideoPostEntity({int? likes, int? views}) => VideoPost(
+    caption: user,
+    videoUrl: videoUrl,
+    likes: likes ?? this.likes,
+    views: views ?? this.views,
+  );
 }
