@@ -1,10 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:toktik/config/theme/app_theme.dart';
 import 'package:toktik/presentation/providers/discover_provider_pexels.dart';
 import 'package:toktik/presentation/screens/discover/discover_screen.dart';
 
-void main() => runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    print("Error loading .env file: $e");
+  }
+
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -14,7 +25,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => DiscoverProviderPexels()..loadNextPage(),
+          create: (_) => DiscoverProviderPexels(),
         )
       ],
       child: MaterialApp(
